@@ -9,6 +9,8 @@
   "dependencies": {
     "@mdi/font": "^3.6.95",
     "core-js": "^3.6.4",
+    "moment": "^2.25.3",
+    "moment-range": "^4.0.2",
     "roboto-fontface": "*",
     "vue": "^2.6.11",
     "vuetify": "^2.2.11"
