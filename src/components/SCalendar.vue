@@ -4,7 +4,15 @@
             :weekdays="[1, 2, 3, 4, 5, 6]"
             type="week"
         >
+            <template #day-label-header="props">
+                <slot
+                    name="day-header"
+                    v-bind="props"
+                />
+            </template>
+            <template #event="{event}">
 
+            </template>
         </v-calendar>
     </v-sheet>
 </template>

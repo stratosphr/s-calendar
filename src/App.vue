@@ -1,18 +1,19 @@
 <template>
     <v-app>
-        <s-calendar />
+        <custom-calendar />
     </v-app>
 </template>
 
 <script>
-	import SCalendar from '@/components/SCalendar'
+	import SCalendar      from '@/components/SCalendar'
+	import CustomCalendar from '@/components/CustomCalendar'
 
 	export default {
 		name: 'App',
 
-		components: {SCalendar},
-
-		mounted() {
+		components: {
+			CustomCalendar,
+			SCalendar
 		}
 	}
 </script>
