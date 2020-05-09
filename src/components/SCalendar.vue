@@ -25,17 +25,18 @@
                 <div
                     :class="`event ${event.color}`"
                     :key="eventIndex"
-                    :style="{ position: 'absolute', left: 0, right: 0, ...geometry(event), overflow: 'hidden'}"
+                    :style="{ position: 'absolute', left: 0, right: 0, ...geometry(event), overflow: 'hidden', opacity: displayGhosts ? 0.5 : 1 }"
                     @mousedown="onMouseDownEvent(event)"
                     v-for="(event, eventIndex) in eventsOnDate(day.date)"
                     v-if="$refs.calendar"
-                >
-
-                </div>
+                />
             </template>
             <template #interval="props">
                 <div
-                    :class="`interval fill-height transparent`"
+                    :class="`interval fill-height`"
+                    @drag.prevent.stop
+                    @mousedown.stop.prevent
+                    @mouseenter="onMouseEnterInterval(props)"
                 />
             </template>
         </v-calendar>
@@ -45,6 +46,7 @@
 <script>
 	import Moment           from 'moment'
 	import { extendMoment } from 'moment-range'
+	import $                from 'jquery'
 
 	const moment = extendMoment(Moment)
 	moment.locale('fr')
@@ -94,7 +96,16 @@
 		}),
 
 		mounted() {
-
+			const self = this
+			$('.interval').css({
+				position: 'relative',
+				zIndex: 0
+			})
+			$(document).mouseup(() => {
+				$('.interval').css({zIndex: 0})
+				self.dragging.status = false
+				self.dragging.event = null
+			})
 		},
 
 		computed: {
@@ -103,6 +114,9 @@
 					start: day.format('YYYY-MM-DD 00:00'),
 					end: day.format('YYYY-MM-DD 24:00')
 				})))
+			},
+			displayGhosts() {
+				return this.dragging.status
 			}
 		},
 
@@ -119,7 +133,14 @@
 				}
 			},
 			onMouseDownEvent(event) {
-				console.log(event)
+				this.dragging.status = true
+				this.dragging.event = event
+				$('.interval').css({zIndex: 1})
+			},
+			onMouseEnterInterval(props) {
+				const duration = moment.range(moment(this.dragging.event.start), moment(this.dragging.event.end)).duration()
+				this.dragging.event.start = `${props.date} ${props.time}`
+				this.dragging.event.end = moment(this.dragging.event.start).add(duration)
 			}
 		}
 
