@@ -9,6 +9,7 @@
   "dependencies": {
     "@mdi/font": "^3.6.95",
     "core-js": "^3.6.4",
+    "jquery": "^3.5.1",
     "moment": "^2.25.3",
     "moment-range": "^4.0.2",
     "roboto-fontface": "*",
