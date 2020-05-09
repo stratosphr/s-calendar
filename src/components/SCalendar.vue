@@ -128,7 +128,7 @@
 
 <style>
     /*noinspection CssUnusedSymbol*/
-    .event {
+    .v-calendar {
         user-select: none;
     }
 
