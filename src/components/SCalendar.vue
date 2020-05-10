@@ -44,13 +44,19 @@
                     </div>
                 </div>
             </template>
-            <template #interval="props">
-                <div
-                    :class="`interval fill-height`"
-                    @drag.prevent.stop
-                    @mousedown.stop.prevent
-                    @mouseenter="onMouseEnterInterval(props)"
-                />
+            <template #interval="{date, time}">
+                <div class="interval fill-height">
+                    <div
+                        :style="{ height: '50%' }"
+                        @mouseenter="onMouseEnterInterval({date, time}, 'top')"
+                        class="red"
+                    />
+                    <div
+                        :style="{ height: '50%' }"
+                        @mouseenter="onMouseEnterInterval({date, time}, 'bottom')"
+                        class="blue"
+                    />
+                </div>
             </template>
         </v-calendar>
     </v-sheet>
@@ -158,9 +164,9 @@
 				this.dragging.status = true
 				this.dragging.event = event
 			},
-			onMouseEnterInterval(props) {
+			onMouseEnterInterval({date, time}, slot) {
 				const duration = moment.range(moment(this.dragging.event.start), moment(this.dragging.event.end)).duration()
-				this.dragging.event.start = `${props.date} ${props.time}`
+				this.dragging.event.start = `${date} ${time}`
 				this.dragging.event.end = moment(this.dragging.event.start).add(duration)
 			}
 		}
