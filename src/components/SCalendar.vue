@@ -115,11 +115,13 @@
 
 		mounted() {
 			const self = this
+			$('*').css({cursor: 'default'})
 			$('.interval').css({
 				position: 'relative',
 				zIndex: 0
 			})
-			$(document).mouseup(() => {
+			$(document).mouseup(function () {
+				$('*').css({cursor: 'default'})
 				$('.interval').css({zIndex: 0})
 				self.dragging.status = false
 				self.dragging.event = null
@@ -151,9 +153,10 @@
 				}
 			},
 			onMouseDownEvent(event) {
+				$('*').css({cursor: 'grabbing'})
+				$('.interval').css({zIndex: 1})
 				this.dragging.status = true
 				this.dragging.event = event
-				$('.interval').css({zIndex: 1})
 			},
 			onMouseEnterInterval(props) {
 				const duration = moment.range(moment(this.dragging.event.start), moment(this.dragging.event.end)).duration()
