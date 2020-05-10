@@ -1,8 +1,29 @@
 <template>
-    <s-calendar>
+    <s-calendar event-color="transparent">
         <template #day-header="{date}">
             <div class="text-capitalize text-truncate caption px-1">
                 {{ formattedDate(date) }}
+            </div>
+        </template>
+        <template #event-header>
+            <div
+                :style="{ borderTopLeftRadius: '3px', borderTopRightRadius: '3px' }"
+                class="black--text teal lighten-2 fill-height"
+            >
+                <div>Header</div>
+                <div>Header 2</div>
+            </div>
+        </template>
+        <template #event-body>
+            <div
+                :style="{ borderBottomLeftRadius: '3px', borderBottomRightRadius: '3px' }"
+                class="black--text info lighten-2 fill-height"
+            >
+                <div>Try</div>
+                <div>My</div>
+                <div>Best</div>
+                <div>Bro</div>
+                <div>Test</div>
             </div>
         </template>
     </s-calendar>

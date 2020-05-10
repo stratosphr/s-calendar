@@ -23,13 +23,26 @@
             </template>
             <template #event="{day}">
                 <div
-                    :class="`event ${event.color}`"
+                    :class="`event`"
                     :key="eventIndex"
                     :style="{ position: 'absolute', left: 0, right: 0, ...geometry(event), overflow: 'hidden', opacity: displayGhosts ? 0.5 : 1 }"
                     @mousedown="onMouseDownEvent(event)"
                     v-for="(event, eventIndex) in eventsOnDate(day.date)"
                     v-if="$refs.calendar"
-                />
+                >
+                    <div
+                        :class="`s-calendar-event-header ${eventColor} overflow-hidden`"
+                        :style="{ height: `${headerHeight - 3}px` }"
+                    >
+                        <slot name="event-header" />
+                    </div>
+                    <div
+                        :class="`s-calendar-event-body ${eventColor} overflow-hidden`"
+                        :style="{ height: `${geometry(event).height.replace('px', '') - headerHeight + 3}px` }"
+                    >
+                        <slot name="event-body" />
+                    </div>
+                </div>
             </template>
             <template #interval="props">
                 <div
@@ -54,6 +67,17 @@
 	export default {
 		name: 's-calendar',
 
+		props: {
+			eventColor: {
+				type: String,
+				default: 'primary'
+			},
+			headerHeight: {
+				type: Number,
+				default: 20
+			}
+		},
+
 		data: () => ({
 			start: moment().startOf('week'),
 			end: moment().endOf('week'),
@@ -64,33 +88,27 @@
 			events: [
 				{
 					start: '2020-05-09 02:10',
-					end: '2020-05-09 03:12',
-					color: 'teal'
+					end: '2020-05-09 03:12'
 				},
 				{
 					start: '2020-05-06 03:23',
-					end: '2020-05-06 04:47',
-					color: 'red'
+					end: '2020-05-06 04:47'
 				},
 				{
 					start: '2020-05-07 10:22',
-					end: '2020-05-07 10:45',
-					color: 'blue-grey'
+					end: '2020-05-07 10:45'
 				},
 				{
 					start: '2020-05-05 02:00',
-					end: '2020-05-05 03:30',
-					color: 'green'
+					end: '2020-05-05 03:30'
 				},
 				{
 					start: '2020-05-05 03:30',
-					end: '2020-05-05 04:30',
-					color: 'orange'
+					end: '2020-05-05 04:30'
 				},
 				{
 					start: '2020-05-05 01:30',
-					end: '2020-05-05 01:45',
-					color: 'info'
+					end: '2020-05-05 01:45'
 				}
 			]
 		}),
@@ -184,5 +202,13 @@
         border: 0 solid !important;
         cursor: default !important;
         border-radius: 0 !important;
+    }
+
+    .s-calendar-event-body > * {
+        height: 100% !important;
+    }
+
+    .s-calendar-event-header > * {
+        height: 100% !important;
     }
 </style>
