@@ -10,8 +10,9 @@
                 :style="{ borderTopLeftRadius: '3px', borderTopRightRadius: '3px' }"
                 class="black--text teal lighten-2 fill-height"
             >
-                <div>Header</div>
-                <div>Header 2</div>
+                <div>Long header text on top</div>
+                <div>Long header text on middle</div>
+                <div>Long header text on bottom</div>
             </div>
         </template>
         <template #event-body>
@@ -19,11 +20,12 @@
                 :style="{ borderBottomLeftRadius: '3px', borderBottomRightRadius: '3px' }"
                 class="black--text info lighten-2 fill-height"
             >
-                <div>Try</div>
-                <div>My</div>
-                <div>Best</div>
-                <div>Bro</div>
-                <div>Test</div>
+                <div>Tall</div>
+                <div>And</div>
+                <div>Very large text, much larger than the events themselves even if calendar is fullscreen</div>
+                <div>For</div>
+                <div>Overflow</div>
+                <div>Checking</div>
             </div>
         </template>
     </s-calendar>
