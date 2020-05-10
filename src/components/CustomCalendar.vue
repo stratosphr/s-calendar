@@ -1,16 +1,17 @@
 <template>
-    <s-calendar event-color="transparent">
+    <s-calendar
+        :header-class="headerClass"
+        :header-css="headerCss"
+        event-color="transparent"
+    >
         <template #day-header="{date}">
             <div class="text-capitalize text-truncate caption px-1">
                 {{ formattedDate(date) }}
             </div>
         </template>
         <template #event-header>
-            <div
-                :style="{ borderTopLeftRadius: '3px', borderTopRightRadius: '3px' }"
-                class="black--text teal lighten-2 fill-height"
-            >
-                <div>Long header text on top</div>
+            <div>
+                <div class="text-truncate">Long header text on top</div>
                 <div>Long header text on middle</div>
                 <div>Long header text on bottom</div>
             </div>
@@ -41,6 +42,14 @@
 		name: 'CustomCalendar',
 
 		components: {SCalendar},
+
+		data: () => ({
+			headerClass: () => ['pl-1', 'teal'],
+			headerCss: () => ({
+				borderTopLeftRadius: '3px',
+				borderTopRightRadius: '3px'
+			})
+		}),
 
 		methods: {
 			formattedDate(date) {

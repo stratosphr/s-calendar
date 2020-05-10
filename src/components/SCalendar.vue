@@ -6,7 +6,7 @@
             :events="containers"
             :first-interval="6"
             :interval-count="24 * 4 - 6"
-            :interval-height="20"
+            :interval-height="intervalHeight"
             :interval-minutes="15"
             :short-intervals="false"
             :start="start.format('YYYY-MM-DD')"
@@ -32,13 +32,31 @@
                 >
                     <div
                         :class="`s-calendar-event-header ${eventColor} overflow-hidden`"
-                        :style="{ height: `${headerHeight - 3}px` }"
+                        :style="{ height: `${intervalHeight - 3}px` }"
                     >
-                        <slot name="event-header" />
+                        <v-row
+                            :class="headerClass(event)"
+                            :style="headerCss(event)"
+                            no-gutters
+                        >
+                            <v-col class="overflow-hidden">
+                                <slot name="event-header" />
+                            </v-col>
+                            <v-col
+                                cols="auto pr-1"
+                                v-for="icon in ['fa-eye', 'fa-lock-open', 'fa-times']"
+                            >
+                                <v-icon
+                                    :size="controlsIconsSize"
+                                    :style="{ marginTop: '-3px' }"
+                                    v-text="icon"
+                                />
+                            </v-col>
+                        </v-row>
                     </div>
                     <div
                         :class="`s-calendar-event-body ${eventColor} overflow-hidden`"
-                        :style="{ height: `${geometry(event).height.replace('px', '') - headerHeight + 3}px` }"
+                        :style="{ height: `${geometry(event).height.replace('px', '') - intervalHeight + 3}px` }"
                     >
                         <slot name="event-body" />
                     </div>
@@ -76,9 +94,17 @@
 				type: String,
 				default: 'primary'
 			},
-			headerHeight: {
+			intervalHeight: {
 				type: Number,
-				default: 20
+				default: 23
+			},
+			headerCss: {
+				type: Function,
+				default: (_) => undefined
+			},
+			headerClass: {
+				type: Function,
+				default: (_) => (['primary'])
 			}
 		},
 
@@ -138,6 +164,9 @@
 					start: day.format('YYYY-MM-DD 00:00'),
 					end: day.format('YYYY-MM-DD 24:00')
 				})))
+			},
+			controlsIconsSize() {
+				return this.intervalHeight / 2
 			},
 			displayGhosts() {
 				return this.dragging.status
