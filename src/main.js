@@ -3,6 +3,7 @@ import App     from './App.vue'
 import vuetify from './plugins/vuetify'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import '@mdi/font/css/materialdesignicons.css'
+import '@fortawesome/fontawesome-free/css/all.css'
 
 Vue.config.productionTip = false
 const ignoreWarnMessage = 'The .native modifier for v-on is only valid on components but it was used on <div>.'
