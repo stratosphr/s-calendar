@@ -23,12 +23,12 @@
             </template>
             <template #event="{day}">
                 <div
-                    :class="`event`"
-                    :key="eventIndex"
+                    :key="events.indexOf(event)"
                     :style="{ position: 'absolute', left: 0, right: 0, ...geometry(event), overflow: 'hidden', opacity: displayGhosts ? 0.5 : 1 }"
-                    @mousedown="onMouseDownEvent(event)"
-                    v-for="(event, eventIndex) in eventsOnDate(day.date)"
+                    :ref="`event-${events.indexOf(event)}`"
+                    class="s-calendar-event"
                     v-if="$refs.calendar"
+                    v-for="event in eventsOnDate(day.date)"
                 >
                     <div
                         :class="`s-calendar-event-header ${eventColor} overflow-hidden`"
@@ -39,19 +39,22 @@
                             :style="headerCss(event)"
                             no-gutters
                         >
-                            <v-col class="s-calendar-event-title overflow-hidden mr-2">
+                            <v-col
+                                @mousedown="onMouseDownEvent(event)"
+                                class="s-calendar-event-title overflow-hidden mr-2"
+                            >
                                 <slot name="event-title" />
                             </v-col>
                             <v-col
+                                :key="controlIndex"
                                 class="s-calendar-event-controls"
                                 cols="auto"
-                                v-for="icon in ['fa-eye', 'fa-lock-open', 'fa-times']"
+                                v-for="(control, controlIndex) in controls"
                             >
-                                <v-icon
-                                    :size="controlsIconsSize"
-                                    :style="{ marginTop: '-1px' }"
-                                    left
-                                    v-text="icon"
+                                <s-calendar-event-control
+                                    :icon="control.icon"
+                                    :icon-size="controlsIconsSize"
+                                    @click="(mouseEvent) => control.click(event, mouseEvent)"
                                 />
                             </v-col>
                         </v-row>
@@ -81,17 +84,22 @@
 </template>
 
 <script>
-	import Moment           from 'moment'
-	import { extendMoment } from 'moment-range'
-	import $                from 'jquery'
+	import Moment                from 'moment'
+	import { extendMoment }      from 'moment-range'
+	import $                     from 'jquery'
+	import SCalendarEventControl from '@/components/SCalendarEventControl'
 
 	const moment = extendMoment(Moment)
 	moment.locale('fr')
 
 	export default {
 		name: 's-calendar',
-
+		components: {SCalendarEventControl},
 		props: {
+			customControls: {
+				type: Array,
+				default: () => []
+			},
 			eventColor: {
 				type: String,
 				default: 'primary'
@@ -165,6 +173,23 @@
 					end: day.format('YYYY-MM-DD 24:00')
 				})))
 			},
+			controls() {
+				return [
+					...this.customControls,
+					{
+						icon: 'fa-lock-open',
+						click: (event) => {
+							this.toggleLock(event)
+						}
+					},
+					{
+						icon: 'fa-times',
+						click: (event) => {
+							this.remove(event)
+						}
+					}
+				]
+			},
 			controlsIconsSize() {
 				return this.intervalHeight / 2
 			},
@@ -193,7 +218,16 @@
 			onMouseEnterInterval({date, time}, slot) {
 				const duration = moment.range(moment(this.dragging.event.start), moment(this.dragging.event.end)).duration()
 				this.dragging.event.start = `${date} ${time}`
-				this.dragging.event.end = moment(this.dragging.event.start).add(duration)
+				this.dragging.event.end = moment(this.dragging.event.start).add(duration).format('YYYY-MM-DD HH:mm')
+			},
+			toggleLock(event) {
+				this.$set(event, 'locked', !event.locked)
+			},
+			remove(event) {
+				this.events = this.events.filter(e => e !== event)
+			},
+			ref(event) {
+				return this.$refs[`event-${this.events.indexOf(event)}`][0]
 			}
 		}
 
