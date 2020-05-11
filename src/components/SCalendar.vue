@@ -39,16 +39,18 @@
                             :style="headerCss(event)"
                             no-gutters
                         >
-                            <v-col class="overflow-hidden">
-                                <slot name="event-header" />
+                            <v-col class="s-calendar-event-title overflow-hidden mr-2">
+                                <slot name="event-title" />
                             </v-col>
                             <v-col
-                                cols="auto pr-1"
+                                class="s-calendar-event-controls"
+                                cols="auto"
                                 v-for="icon in ['fa-eye', 'fa-lock-open', 'fa-times']"
                             >
                                 <v-icon
                                     :size="controlsIconsSize"
-                                    :style="{ marginTop: '-3px' }"
+                                    :style="{ marginTop: '-1px' }"
+                                    left
                                     v-text="icon"
                                 />
                             </v-col>
@@ -145,13 +147,11 @@
 
 		mounted() {
 			const self = this
-			$('*').css({cursor: 'default'})
 			$('.interval').css({
 				position: 'relative',
 				zIndex: 0
 			})
 			$(document).mouseup(function () {
-				$('*').css({cursor: 'default'})
 				$('.interval').css({zIndex: 0})
 				self.dragging.status = false
 				self.dragging.event = null
@@ -186,7 +186,6 @@
 				}
 			},
 			onMouseDownEvent(event) {
-				$('*').css({cursor: 'grabbing'})
 				$('.interval').css({zIndex: 1})
 				this.dragging.status = true
 				this.dragging.event = event
@@ -235,8 +234,8 @@
     /*noinspection CssUnusedSymbol*/
     *.v-event-timed {
         padding: 0 !important;
-        border: 0 solid !important;
         cursor: default !important;
+        border: 0 solid !important;
         border-radius: 0 !important;
     }
 
