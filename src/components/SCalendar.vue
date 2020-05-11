@@ -24,11 +24,11 @@
             <template #event="{day}">
                 <div
                     :key="events.indexOf(event)"
-                    :style="{ position: 'absolute', left: 0, right: 0, ...geometry(event), overflow: 'hidden', opacity: displayGhosts ? 0.5 : 1 }"
                     :ref="`event-${events.indexOf(event)}`"
+                    :style="{ position: 'absolute', left: 0, right: 0, ...geometry(event), overflow: 'hidden', opacity: displayGhosts ? 0.5 : 1 }"
                     class="s-calendar-event"
-                    v-if="$refs.calendar"
                     v-for="event in eventsOnDate(day.date)"
+                    v-if="$refs.calendar"
                 >
                     <div
                         :class="`s-calendar-event-header ${eventColor} overflow-hidden`"
