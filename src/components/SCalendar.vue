@@ -227,7 +227,8 @@
 				this.events = this.events.filter(e => e !== event)
 			},
 			ref(event) {
-				return this.$refs[`event-${this.events.indexOf(event)}`][0]
+				const ref = this.$refs[`event-${this.events.indexOf(event)}`]
+				return ref ? ref[0] : null
 			}
 		}
 
