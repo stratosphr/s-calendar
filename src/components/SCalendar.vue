@@ -45,7 +45,10 @@
                                 @mousedown="onMouseDownEvent(event)"
                                 class="s-calendar-event-title overflow-hidden mr-2"
                             >
-                                <slot name="event-title" />
+                                <slot
+                                    :event="event"
+                                    name="event-title"
+                                />
                             </v-col>
                             <v-col
                                 :key="controlIndex"
@@ -67,7 +70,10 @@
                         :class="`s-calendar-event-body ${eventColor} overflow-hidden`"
                         :style="{ height: `${geometry(event).height.replace('px', '') - intervalHeight + 3}px` }"
                     >
-                        <slot name="event-body" />
+                        <slot
+                            :event="event"
+                            name="event-body"
+                        />
                     </div>
 
                     <!-- MENU -->
