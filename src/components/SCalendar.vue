@@ -48,6 +48,8 @@
                             :style="headerCss(event)"
                             no-gutters
                         >
+
+                            <!-- TITLE -->
                             <v-col
                                 @mousedown="onMouseDownEvent(event)"
                                 class="s-calendar-event-title overflow-hidden mr-2"
@@ -57,6 +59,8 @@
                                     name="event-title"
                                 />
                             </v-col>
+
+                            <!-- CONTROLS -->
                             <v-col
                                 :key="controlIndex"
                                 class="s-calendar-event-controls"
@@ -71,6 +75,7 @@
                                     @click="(mouseEvent) => control.click(event, mouseEvent)"
                                 />
                             </v-col>
+
                         </v-row>
                     </div>
 
@@ -143,6 +148,14 @@
 		components: {SCalendarEventControl},
 
 		props: {
+			removableEvents: {
+				type: Boolean,
+				default: true
+			},
+			lockableEvents: {
+				type: Boolean,
+				default: true
+			},
 			customControls: {
 				type: Array,
 				default: () => []
@@ -249,26 +262,30 @@
 			controls() {
 				return [
 					...this.customControls,
-					{
-						icon: (event) => {
-							return event.locked ? 'fa-lock' : 'fa-lock-open'
-						},
-						iconColor: (event) => {
-							return event.locked ? 'error' : undefined
-						},
-						click: (event) => {
-							this.toggleLock(event)
+					...this.lockableEvents ? [
+						{
+							icon: (event) => {
+								return event.locked ? 'fa-lock' : 'fa-lock-open'
+							},
+							iconColor: (event) => {
+								return event.locked ? 'error' : undefined
+							},
+							click: (event) => {
+								this.toggleLock(event)
+							}
 						}
-					},
-					{
-						icon: () => 'fa-times',
-						iconDisabled: (event) => {
-							return event.locked
-						},
-						click: (event) => {
-							this.remove(event)
+					] : [],
+					...this.removableEvents ? [
+						{
+							icon: () => 'fa-times',
+							iconDisabled: (event) => {
+								return event.locked
+							},
+							click: (event) => {
+								this.remove(event)
+							}
 						}
-					}
+					] : []
 				]
 			},
 			controlsIconsSize() {
