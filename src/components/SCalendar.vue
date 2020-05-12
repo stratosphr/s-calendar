@@ -30,6 +30,8 @@
                     v-for="event in eventsOnDate(day.date)"
                     v-if="$refs.calendar"
                 >
+
+                    <!-- HEADER -->
                     <div
                         :class="`s-calendar-event-header ${eventColor} overflow-hidden`"
                         :style="{ height: `${intervalHeight - 3}px` }"
@@ -59,12 +61,16 @@
                             </v-col>
                         </v-row>
                     </div>
+
+                    <!-- BODY -->
                     <div
                         :class="`s-calendar-event-body ${eventColor} overflow-hidden`"
                         :style="{ height: `${geometry(event).height.replace('px', '') - intervalHeight + 3}px` }"
                     >
                         <slot name="event-body" />
                     </div>
+
+                    <!-- MENU -->
                     <v-menu
                         :activator="ref(event)"
                         :left="day.weekday > 3"
