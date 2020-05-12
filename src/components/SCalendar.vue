@@ -63,8 +63,9 @@
                                 v-for="(control, controlIndex) in controls"
                             >
                                 <s-calendar-event-control
-                                    :icon="control.icon"
+                                    :icon="control.icon(event)"
                                     :icon-size="controlsIconsSize"
+                                    :iconColor="control.iconColor ? control.iconColor(event) : undefined"
                                     @click="(mouseEvent) => control.click(event, mouseEvent)"
                                 />
                             </v-col>
@@ -246,13 +247,18 @@
 				return [
 					...this.customControls,
 					{
-						icon: 'fa-lock-open',
+						icon: (event) => {
+							return event.locked ? 'fa-lock' : 'fa-lock-open'
+						},
+						iconColor: (event) => {
+							return event.locked ? 'error' : undefined
+						},
 						click: (event) => {
 							this.toggleLock(event)
 						}
 					},
 					{
-						icon: 'fa-times',
+						icon: () => 'fa-times',
 						click: (event) => {
 							this.remove(event)
 						}

@@ -1,5 +1,6 @@
 <template>
     <v-icon
+        :color="iconColor"
         :size="iconSize"
         :style="{ marginTop: '-1px' }"
         @click="mouseEvent => $emit('click', mouseEvent)"
@@ -16,6 +17,9 @@
 			icon: {
 				type: String,
 				required: true
+			},
+			iconColor: {
+				type: String
 			},
 			iconSize: {
 				type: Number,

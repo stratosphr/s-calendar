@@ -77,7 +77,10 @@
 			customControls() {
 				return [
 					{
-						icon: 'fa-eye',
+						icon: () => 'fa-eye',
+						iconColor: (event) => {
+							return event.showMenu ? 'white' : undefined
+						},
 						click: (event) => {
 							this.$set(event, 'showMenu', !event.showMenu)
 						}
