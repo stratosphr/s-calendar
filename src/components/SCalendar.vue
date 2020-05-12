@@ -75,6 +75,7 @@
                         allow-overflow
                         offset-overflow
                         offset-x
+                        v-if="$scopedSlots['event-menu']"
                         v-model="event.showMenu"
                     >
                         <slot
