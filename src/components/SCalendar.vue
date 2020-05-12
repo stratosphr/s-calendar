@@ -7,7 +7,7 @@
             :first-interval="6"
             :interval-count="24 * 4 - 6"
             :interval-height="intervalHeight"
-            :interval-minutes="15"
+            :interval-minutes="intervalMinutes"
             :short-intervals="false"
             :start="start.format('YYYY-MM-DD')"
             :weekdays="[1, 2, 3, 4, 5, 6]"
@@ -30,6 +30,12 @@
                     v-for="event in eventsOnDate(day.date)"
                     v-if="$refs.calendar"
                 >
+
+                    <!-- RESIZER TOP -->
+                    <div
+                        :style="{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', cursor: 'row-resize' }"
+                        @mousedown="onResize(event, 'top')"
+                    />
 
                     <!-- HEADER -->
                     <div
@@ -76,6 +82,12 @@
                         />
                     </div>
 
+                    <!-- RESIZER BOTTOM -->
+                    <div
+                        :style="{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '4px', cursor: 'row-resize' }"
+                        @mousedown="onResize(event, 'bottom')"
+                    />
+
                     <!-- MENU -->
                     <v-menu
                         :activator="ref(event)"
@@ -84,8 +96,6 @@
                         :nudge-right="day.weekday <= 3 ? 3 : 0"
                         :open-on-click="false"
                         :right="day.weekday <= 3"
-                        allow-overflow
-                        offset-overflow
                         offset-x
                         v-if="$scopedSlots['event-menu']"
                         v-model="event.showMenu"
@@ -95,6 +105,7 @@
                             name="event-menu"
                         />
                     </v-menu>
+
                 </div>
             </template>
             <template #interval="{date, time}">
@@ -136,6 +147,10 @@
 				type: String,
 				default: 'primary'
 			},
+			intervalMinutes: {
+				type: Number,
+				default: 60
+			},
 			intervalHeight: {
 				type: Number,
 				default: 23
@@ -156,6 +171,11 @@
 			dragging: {
 				status: false,
 				event: null
+			},
+			resizing: {
+				status: false,
+				event: null,
+				slot: null
 			},
 			events: [
 				{
@@ -201,7 +221,18 @@
 				$('.interval').css({zIndex: 0})
 				self.dragging.status = false
 				self.dragging.event = null
+				self.resizing.status = false
+				self.resizing.event = null
 			})
+		},
+
+		watch: {
+			displayGhosts(displayGhosts) {
+				if (displayGhosts) {
+					$('.interval').css({zIndex: 1})
+					this.events.forEach(e => this.$set(e, 'showMenu', false))
+				}
+			}
 		},
 
 		computed: {
@@ -232,7 +263,7 @@
 				return this.intervalHeight / 2
 			},
 			displayGhosts() {
-				return this.dragging.status
+				return this.dragging.status || this.resizing.status
 			}
 		},
 
@@ -249,15 +280,26 @@
 				}
 			},
 			onMouseDownEvent(event) {
-				$('.interval').css({zIndex: 1})
-				this.events.forEach(e => this.$set(e, 'showMenu', false))
 				this.dragging.status = true
 				this.dragging.event = event
 			},
 			onMouseEnterInterval({date, time}, slot) {
-				const duration = moment.range(moment(this.dragging.event.start), moment(this.dragging.event.end)).duration()
-				this.dragging.event.start = `${date} ${time}`
-				this.dragging.event.end = moment(this.dragging.event.start).add(duration).format('YYYY-MM-DD HH:mm')
+				if (this.dragging.status) {
+					const duration = moment.range(moment(this.dragging.event.start), moment(this.dragging.event.end)).duration()
+					this.dragging.event.start = `${date} ${time}`
+					this.dragging.event.end = moment(this.dragging.event.start).add(duration).format('YYYY-MM-DD HH:mm')
+				} else if (this.resizing.status) {
+					if (this.resizing.slot === 'top') {
+						this.resizing.event.start = `${date} ${time}`
+					} else {
+						this.resizing.event.end = moment(`${date} ${time}`).add({minutes: this.intervalMinutes}).format('YYYY-MM-DD HH:mm')
+					}
+				}
+			},
+			onResize(event, slot) {
+				this.resizing.status = true
+				this.resizing.event = event
+				this.resizing.slot = slot
 			},
 			toggleLock(event) {
 				this.$set(event, 'locked', !event.locked)

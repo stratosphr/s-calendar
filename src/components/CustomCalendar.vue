@@ -4,6 +4,7 @@
             :custom-controls="customControls"
             :header-class="headerClass"
             :header-css="headerCss"
+            :interval-minutes="15"
             event-color="transparent"
             ref="calendar"
         >
