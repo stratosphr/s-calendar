@@ -65,7 +65,8 @@
                                 <s-calendar-event-control
                                     :icon="control.icon(event)"
                                     :icon-size="controlsIconsSize"
-                                    :iconColor="control.iconColor ? control.iconColor(event) : undefined"
+                                    :icon-color="control.iconColor ? control.iconColor(event) : undefined"
+                                    :icon-disabled="control.iconDisabled ? control.iconDisabled(event) : undefined"
                                     @click="(mouseEvent) => control.click(event, mouseEvent)"
                                 />
                             </v-col>
@@ -259,6 +260,9 @@
 					},
 					{
 						icon: () => 'fa-times',
+						iconDisabled: (event) => {
+							return event.locked
+						},
 						click: (event) => {
 							this.remove(event)
 						}
