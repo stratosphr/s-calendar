@@ -65,6 +65,23 @@
                     >
                         <slot name="event-body" />
                     </div>
+                    <v-menu
+                        :activator="ref(event)"
+                        :left="day.weekday > 3"
+                        :nudge-left="day.weekday > 3 ? 3 : 0"
+                        :nudge-right="day.weekday <= 3 ? 3 : 0"
+                        :open-on-click="false"
+                        :right="day.weekday <= 3"
+                        allow-overflow
+                        offset-overflow
+                        offset-x
+                        v-model="event.showMenu"
+                    >
+                        <slot
+                            :event="event"
+                            name="event-menu"
+                        />
+                    </v-menu>
                 </div>
             </template>
             <template #interval="{date, time}">
@@ -79,6 +96,7 @@
                     />
                 </div>
             </template>
+            /sh
         </v-calendar>
     </v-sheet>
 </template>
@@ -94,7 +112,9 @@
 
 	export default {
 		name: 's-calendar',
+
 		components: {SCalendarEventControl},
+
 		props: {
 			customControls: {
 				type: Array,
@@ -212,6 +232,7 @@
 			},
 			onMouseDownEvent(event) {
 				$('.interval').css({zIndex: 1})
+				this.events.forEach(e => this.$set(e, 'showMenu', false))
 				this.dragging.status = true
 				this.dragging.event = event
 			},
@@ -229,6 +250,9 @@
 			ref(event) {
 				const ref = this.$refs[`event-${this.events.indexOf(event)}`]
 				return ref ? ref[0] : null
+			},
+			firstHalfOfWeek(event) {
+				console.log(event)
 			}
 		}
 
