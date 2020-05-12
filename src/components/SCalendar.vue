@@ -23,8 +23,8 @@
             </template>
             <template #event="{day}">
                 <div
-                    :key="events.indexOf(event)"
-                    :ref="`event-${events.indexOf(event)}`"
+                    :key="event.index"
+                    :ref="`event-${event.index}`"
                     :style="{ position: 'absolute', left: 0, right: 0, ...geometry(event), overflow: 'hidden', opacity: displayGhosts ? 0.5 : 1 }"
                     class="s-calendar-event"
                     v-for="event in eventsOnDate(day.date)"
@@ -146,26 +146,32 @@
 			},
 			events: [
 				{
+					index: 0,
 					start: '2020-05-16 02:10',
 					end: '2020-05-16 03:12'
 				},
 				{
+					index: 1,
 					start: '2020-05-12 03:23',
 					end: '2020-05-12 04:47'
 				},
 				{
+					index: 2,
 					start: '2020-05-14 10:22',
 					end: '2020-05-14 10:45'
 				},
 				{
+					index: 3,
 					start: '2020-05-11 02:00',
 					end: '2020-05-11 03:30'
 				},
 				{
+					index: 4,
 					start: '2020-05-13 03:30',
 					end: '2020-05-13 04:30'
 				},
 				{
+					index: 5,
 					start: '2020-05-12 01:30',
 					end: '2020-05-12 01:45'
 				}
@@ -247,7 +253,7 @@
 				this.events = this.events.filter(e => e !== event)
 			},
 			ref(event) {
-				const ref = this.$refs[`event-${this.events.indexOf(event)}`]
+				const ref = this.$refs[`event-${event.index}`]
 				return ref ? ref[0] : null
 			}
 		}
