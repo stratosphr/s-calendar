@@ -66,6 +66,7 @@
                                 class="s-calendar-event-controls"
                                 cols="auto"
                                 v-for="(control, controlIndex) in controls"
+                                v-if="!displayGhosts"
                             >
                                 <s-calendar-event-control
                                     :icon="control.icon(event)"
