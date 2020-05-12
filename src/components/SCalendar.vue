@@ -250,6 +250,9 @@
 			ref(event) {
 				const ref = this.$refs[`event-${this.events.indexOf(event)}`]
 				return ref ? ref[0] : null
+			},
+			firstHalfOfWeek(event) {
+				console.log(event)
 			}
 		}
 
