@@ -35,6 +35,7 @@
                     <div
                         :style="{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', cursor: 'row-resize' }"
                         @mousedown="onResize(event, 'top')"
+                        class="s-calendar-event-resizer"
                     />
 
                     <!-- HEADER -->
@@ -64,9 +65,9 @@
                             >
                                 <s-calendar-event-control
                                     :icon="control.icon(event)"
-                                    :icon-size="controlsIconsSize"
                                     :icon-color="control.iconColor ? control.iconColor(event) : undefined"
                                     :icon-disabled="control.iconDisabled ? control.iconDisabled(event) : undefined"
+                                    :icon-size="controlsIconsSize"
                                     @click="(mouseEvent) => control.click(event, mouseEvent)"
                                 />
                             </v-col>
@@ -88,6 +89,7 @@
                     <div
                         :style="{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '4px', cursor: 'row-resize' }"
                         @mousedown="onResize(event, 'bottom')"
+                        class="s-calendar-event-resizer"
                     />
 
                     <!-- MENU -->
