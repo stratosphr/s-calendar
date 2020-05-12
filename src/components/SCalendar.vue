@@ -310,6 +310,7 @@
 				}
 			},
 			onMouseDownEvent(event) {
+				console.log('here')
 				this.dragging.status = true
 				this.dragging.event = event
 			},
@@ -320,9 +321,9 @@
 					this.dragging.event.end = moment(this.dragging.event.start).add(duration).format('YYYY-MM-DD HH:mm')
 				} else if (this.resizing.status) {
 					if (this.resizing.slot === 'top') {
-						this.resizing.event.start = `${date} ${time}`
+						this.resizing.event.start = `${moment(this.resizing.event.start).format('YYYY-MM-DD')} ${time}`
 					} else {
-						this.resizing.event.end = moment(`${date} ${time}`).add({minutes: this.intervalMinutes}).format('YYYY-MM-DD HH:mm')
+						this.resizing.event.end = moment(`${moment(this.resizing.event.end).format('YYYY-MM-DD')} ${time}`).add({minutes: this.intervalMinutes}).format('YYYY-MM-DD HH:mm')
 					}
 				}
 			},

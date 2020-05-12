@@ -20,13 +20,13 @@
                     <div>Long header text on bottom</div>
                 </div>
             </template>
-            <template #event-body>
+            <template #event-body="{event}">
                 <div
                     :style="bodyStyle"
                     class="fill-height text-left pa-1 black--text"
                 >
-                    <div>Tall</div>
-                    <div>And</div>
+                    <div>{{event.start}}</div>
+                    <div>{{event.end}}</div>
                     <div>Very large text, much larger than the events themselves even if calendar is fullscreen</div>
                     <div>For</div>
                     <div>Overflow</div>
