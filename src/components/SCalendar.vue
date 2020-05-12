@@ -66,6 +66,7 @@
                         <slot name="event-body" />
                     </div>
                     <v-menu
+                        v-if="$scopedSlots['event-menu']"
                         :activator="ref(event)"
                         :left="day.weekday > 3"
                         :nudge-left="day.weekday > 3 ? 3 : 0"
