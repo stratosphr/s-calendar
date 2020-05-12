@@ -62,7 +62,7 @@
 				backgroundColor: colors.teal.lighten2,
 				borderTopLeftRadius: '3px',
 				borderTopRightRadius: '3px',
-				border: `solid ${colors.teal.base} thin`
+				border: `solid ${colors.teal.base} 1px`
 			}),
 			bodyStyle: {
 				backgroundColor: colors.teal.lighten4,
