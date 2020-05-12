@@ -1,16 +1,5 @@
 <template>
     <div>
-        <v-menu
-            :activator="detailsActivator"
-            :close-on-content-click="false"
-            :open-on-click="false"
-            offset-x
-            v-model="showDetails"
-        >
-            <v-card>
-                Test
-            </v-card>
-        </v-menu>
         <s-calendar
             :custom-controls="customControls"
             :header-class="headerClass"
@@ -43,6 +32,13 @@
                     <div>Checking</div>
                 </div>
             </template>
+            <template #event-menu="{event}">
+                <v-card max-width="300">
+                    <v-card-text>
+                        {{event}}
+                    </v-card-text>
+                </v-card>
+            </template>
         </s-calendar>
     </div>
 </template>
@@ -73,9 +69,7 @@
 				borderBottomRightRadius: '3px',
 				border: `solid ${colors.teal.base} 1px`,
 				borderTop: 'none'
-			},
-			detailsActivator: null,
-			showDetails: false
+			}
 		}),
 
 		computed: {
@@ -84,11 +78,7 @@
 					{
 						icon: 'fa-eye',
 						click: (event) => {
-							this.showDetails = false
-							this.detailsActivator = this.$refs.calendar.ref(event)
-							this.$nextTick(function () {
-								this.showDetails = true
-							})
+							this.$set(event, 'showMenu', !event.showMenu)
 						}
 					}
 				]
