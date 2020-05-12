@@ -96,7 +96,6 @@
                     />
                 </div>
             </template>
-            /sh
         </v-calendar>
     </v-sheet>
 </template>
