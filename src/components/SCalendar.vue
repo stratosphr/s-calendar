@@ -34,7 +34,7 @@
                     <!-- RESIZER TOP -->
                     <div
                         :style="{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', cursor: 'row-resize' }"
-                        @mousedown="onResize(event, 'top')"
+                        @mousedown="resize(event, 'top')"
                         class="s-calendar-event-resizer"
                     />
 
@@ -51,7 +51,7 @@
 
                             <!-- TITLE -->
                             <v-col
-                                @mousedown="onMouseDownEvent(event)"
+                                @mousedown="dragStart(event)"
                                 class="s-calendar-event-title overflow-hidden mr-2"
                             >
                                 <slot
@@ -94,7 +94,7 @@
                     <!-- RESIZER BOTTOM -->
                     <div
                         :style="{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '4px', cursor: 'row-resize' }"
-                        @mousedown="onResize(event, 'bottom')"
+                        @mousedown="resize(event, 'bottom')"
                         class="s-calendar-event-resizer"
                     />
 
@@ -122,12 +122,12 @@
                 <div class="interval fill-height">
                     <div
                         :style="{ position: 'absolute', left: 0, width: '50%', opacity: 0.4 }"
-                        @mouseenter="onMouseEnterInterval({date, time}, 'top')"
+                        @mouseenter="drag({date, time}, 'top')"
                         class="fill-height"
                     />
                     <div
                         :style="{ position: 'absolute', right: 0, width: '50%', opacity: 0.4 }"
-                        @mouseenter="onMouseEnterInterval({date, time}, 'bottom')"
+                        @mouseenter="drag({date, time}, 'bottom')"
                         class="fill-height"
                     />
                 </div>
@@ -326,11 +326,11 @@
 					height: `${height}px`
 				}
 			},
-			onMouseDownEvent(event) {
+			dragStart(event) {
 				this.dragging.status = true
 				this.dragging.event = event
 			},
-			onMouseEnterInterval({date, time}, slot) {
+			drag({date, time}, slot) {
 				if (this.displayGhosts) {
 					let start, end, event
 					if (this.dragging.status) {
@@ -421,7 +421,7 @@
 					}
 				}
 			},
-			onResize(event, slot) {
+			resize(event, slot) {
 				this.resizing.status = true
 				this.resizing.event = event
 				this.resizing.slot = slot
