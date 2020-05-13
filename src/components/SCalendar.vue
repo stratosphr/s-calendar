@@ -1,5 +1,11 @@
 <template>
-    <v-sheet height="350">
+    <v-sheet height="400">
+        <div
+            class="overflow-hidden"
+            ref="s-calendar-controls"
+        >
+            <slot name="calendar-controls" />
+        </div>
         <v-calendar
             :end="end.format('YYYY-MM-DD')"
             :event-ripple="false"
@@ -10,6 +16,7 @@
             :interval-minutes="intervalMinutes"
             :short-intervals="false"
             :start="start.format('YYYY-MM-DD')"
+            :interval-width="intervalWidth"
             :weekdays="weekdays"
             event-color="transparent"
             ref="calendar"
@@ -180,6 +187,10 @@
 				type: Array,
 				default: () => [1, 2, 3, 4, 5, 6, 0]
 			},
+			intervalWidth: {
+				type: Number,
+				default: 60
+			},
 			removableEvents: {
 				type: Boolean,
 				default: true
@@ -276,6 +287,7 @@
 		}),
 
 		mounted() {
+			$(this.$refs['s-calendar-controls']).appendTo('.v-calendar-daily__intervals-head')
 			const self = this
 			$('.interval').css({
 				position: 'relative',

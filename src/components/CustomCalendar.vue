@@ -11,6 +11,9 @@
             event-color="transparent"
             ref="calendar"
         >
+            <template #calendar-controls>
+                Calendar controls
+            </template>
             <template #day-header="{date}">
                 <div class="text-capitalize text-truncate caption px-1">
                     {{ formattedDate(date) }}
