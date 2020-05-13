@@ -4,8 +4,8 @@
             :end="end.format('YYYY-MM-DD')"
             :event-ripple="false"
             :events="containers"
-            :first-interval="6"
-            :interval-count="24 * 4 - 6"
+            :first-interval="firstInterval"
+            :interval-count="intervalCount"
             :interval-height="intervalHeight"
             :interval-minutes="intervalMinutes"
             :short-intervals="false"
@@ -184,6 +184,14 @@
 				type: String,
 				default: 'primary'
 			},
+			firstInterval: {
+				type: Number,
+				default: 0
+			},
+			intervalCount: {
+				type: Number,
+				default: 24
+			},
 			intervalMinutes: {
 				type: Number,
 				default: 60
@@ -335,6 +343,12 @@
 			},
 			tmpGhosts() {
 				return this.events.map(event => event.tmpGhost)
+			},
+			forbiddenRanges() {
+				return [...moment.range(this.start, this.end).by('day')].map(day => [
+					moment.range(moment(day.format('YYYY-MM-DD 00:00')), moment(day.format('YYYY-MM-DD 00:00')).add({minutes: this.firstInterval * this.intervalMinutes})),
+					moment.range(moment(day.format('YYYY-MM-DD 00:00')).add({minutes: (this.intervalCount + this.firstInterval) * this.intervalMinutes}), moment(day.format('YYYY-MM-DD 24:00')))
+				]).flat()
 			}
 		},
 
@@ -381,8 +395,12 @@
 							start,
 							end
 						}
-						this.droppable = true
-						this.schedule(event.ghost, slot)
+						if (this.overlapsForbiddenRange(event.ghost)) {
+							this.droppable = false
+						} else {
+							this.droppable = true
+							this.schedule(event.ghost, slot)
+						}
 					}
 				}
 			},
@@ -424,7 +442,10 @@
 				if (moment(after.start).isBefore(moment(before.end))) {
 					const diff = moment.duration(moment(before.end).diff(moment(after.start)))
 					const ghost = this.ghosts.find(ghost => ghost.index === before.index)
-					if (ghost.locked) {
+					if (ghost.locked || this.overlapsForbiddenRange({
+						start: moment(ghost.start).subtract(diff).format('YYYY-MM-DD HH:mm'),
+						end: moment(ghost.end).subtract(diff).format('YYYY-MM-DD HH:mm')
+					})) {
 						this.droppable = false
 					} else {
 						ghost.start = moment(ghost.start).subtract(diff).format('YYYY-MM-DD HH:mm')
@@ -439,7 +460,10 @@
 				if (moment(before.end).isAfter(moment(after.start))) {
 					const diff = moment.duration(moment(before.end).diff(moment(after.start)))
 					const ghost = this.ghosts.find(ghost => ghost.index === after.index)
-					if (ghost.locked) {
+					if (ghost.locked || this.overlapsForbiddenRange({
+						start: moment(ghost.start).add(diff).format('YYYY-MM-DD HH:mm'),
+						end: moment(ghost.end).add(diff).format('YYYY-MM-DD HH:mm')
+					})) {
 						this.droppable = false
 					} else {
 						ghost.start = moment(ghost.start).add(diff).format('YYYY-MM-DD HH:mm')
@@ -460,6 +484,9 @@
 			},
 			remove(event) {
 				this.events = this.events.filter(e => e !== event)
+			},
+			overlapsForbiddenRange(event) {
+				return this.forbiddenRanges.some(forbiddenPeriod => moment.range(moment(event.start), moment(event.end)).overlaps(forbiddenPeriod))
 			},
 			clone(event) {
 				const {ghost, tmpGhost, ...clone} = event

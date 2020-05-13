@@ -2,8 +2,10 @@
     <div>
         <s-calendar
             :custom-controls="customControls"
+            :first-interval="6"
             :header-class="headerClass"
             :header-css="headerCss"
+            :interval-count="14"
             :interval-minutes="15"
             event-color="transparent"
             ref="calendar"
