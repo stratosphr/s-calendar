@@ -31,6 +31,21 @@
                     v-if="$refs.calendar"
                 >
 
+                    <v-overlay
+                        :value="displayGhosts && event.locked"
+                        absolute
+                        color="error"
+                    >
+                        <v-fade-transition appear>
+                            <div class="fill-height">
+                                <v-icon
+                                    color="error"
+                                    v-text="'fa-lock'"
+                                />
+                            </div>
+                        </v-fade-transition>
+                    </v-overlay>
+
                     <!-- HEADER -->
                     <div
                         :class="`s-calendar-event-header ${eventColor} overflow-hidden`"
