@@ -7,6 +7,7 @@
             :header-css="headerCss"
             :interval-count="14"
             :interval-minutes="15"
+            :weekdays="[1, 2, 3, 4, 5, 6]"
             event-color="transparent"
             ref="calendar"
         >

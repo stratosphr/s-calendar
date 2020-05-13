@@ -10,7 +10,7 @@
             :interval-minutes="intervalMinutes"
             :short-intervals="false"
             :start="start.format('YYYY-MM-DD')"
-            :weekdays="[1, 2, 3, 4, 5, 6]"
+            :weekdays="weekdays"
             event-color="transparent"
             ref="calendar"
             type="week"
@@ -168,6 +168,10 @@
 		components: {SCalendarEventControl},
 
 		props: {
+			weekdays: {
+				type: Array,
+				default: () => [1, 2, 3, 4, 5, 6, 0]
+			},
 			removableEvents: {
 				type: Boolean,
 				default: true
