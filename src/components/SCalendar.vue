@@ -157,7 +157,7 @@
 	import Moment                from 'moment'
 	import { extendMoment }      from 'moment-range'
 	import $                     from 'jquery'
-	import SCalendarEventControl from '@/components/SCalendarEventControl'
+	import SCalendarEventControl from './SCalendarEventControl'
 
 	const moment = extendMoment(Moment)
 	moment.locale('fr')

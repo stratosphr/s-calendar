@@ -46,7 +46,7 @@
 
 <script>
 	import moment    from 'moment'
-	import SCalendar from '@/components/SCalendar'
+	import SCalendar from './SCalendar'
 	import colors    from 'vuetify/lib/util/colors'
 
 	moment.locale('fr')
