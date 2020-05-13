@@ -121,12 +121,14 @@
             <template #interval="{date, time}">
                 <div class="interval fill-height">
                     <div
-                        :style="{ height: '50%' }"
+                        :style="{ position: 'absolute', left: 0, width: '50%', opacity: 0.4 }"
                         @mouseenter="onMouseEnterInterval({date, time}, 'top')"
+                        class="fill-height"
                     />
                     <div
-                        :style="{ height: '50%' }"
+                        :style="{ position: 'absolute', right: 0, width: '50%', opacity: 0.4 }"
                         @mouseenter="onMouseEnterInterval({date, time}, 'bottom')"
+                        class="fill-height"
                     />
                 </div>
             </template>
@@ -198,17 +200,17 @@
 			events: [
 				{
 					index: 0,
-					start: '2020-05-16 02:10',
-					end: '2020-05-16 03:12'
+					start: '2020-05-16 02:15',
+					end: '2020-05-16 03:15'
 				},
 				{
 					index: 1,
-					start: '2020-05-12 03:23',
-					end: '2020-05-12 04:47'
+					start: '2020-05-12 03:30',
+					end: '2020-05-12 04:45'
 				},
 				{
 					index: 2,
-					start: '2020-05-14 10:22',
+					start: '2020-05-14 10:15',
 					end: '2020-05-14 10:45'
 				},
 				{
@@ -236,19 +238,28 @@
 				zIndex: 0
 			})
 			$(document).mouseup(function () {
-				$('.interval').css({zIndex: 0})
 				self.dragging.status = false
-				self.dragging.event = null
 				self.resizing.status = false
+				self.dragging.event = null
 				self.resizing.event = null
+				$('.interval').css({zIndex: 0})
 			})
 		},
 
 		watch: {
 			displayGhosts(displayGhosts) {
 				if (displayGhosts) {
+					this.events.forEach(e => {
+						this.$set(e, 'showMenu', false)
+						this.$set(e, 'tmpGhost', this.clone(e))
+						this.$set(e, 'ghost', this.clone(e))
+					})
 					$('.interval').css({zIndex: 1})
-					this.events.forEach(e => this.$set(e, 'showMenu', false))
+				} else {
+					this.events.forEach(e => {
+						e.start = e.ghost.start
+						e.end = e.ghost.end
+					})
 				}
 			}
 		},
@@ -262,8 +273,8 @@
 			},
 			controls() {
 				return [
-					...this.customControls,
-					...this.lockableEvents ? [
+					this.customControls,
+					this.lockableEvents ? [
 						{
 							icon: (event) => {
 								return event.locked ? 'fa-lock' : 'fa-lock-open'
@@ -276,7 +287,7 @@
 							}
 						}
 					] : [],
-					...this.removableEvents ? [
+					this.removableEvents ? [
 						{
 							icon: () => 'fa-times',
 							iconDisabled: (event) => {
@@ -287,19 +298,25 @@
 							}
 						}
 					] : []
-				]
+				].flat()
 			},
 			controlsIconsSize() {
 				return this.intervalHeight / 2
 			},
 			displayGhosts() {
 				return this.dragging.status || this.resizing.status
+			},
+			ghosts() {
+				return this.events.map(event => event.ghost)
+			},
+			tmpGhosts() {
+				return this.events.map(event => event.tmpGhost)
 			}
 		},
 
 		methods: {
 			eventsOnDate(date) {
-				return this.events.filter(event => moment(event.start).format('YYYY-MM-DD') === date)
+				return (this.displayGhosts ? this.ghosts : this.events).filter(event => moment(event.start).format('YYYY-MM-DD') === date)
 			},
 			geometry(event) {
 				const top = this.$refs.calendar.timeToY(moment(event.start).format('HH:mm')) + 1
@@ -310,20 +327,97 @@
 				}
 			},
 			onMouseDownEvent(event) {
-				console.log('here')
 				this.dragging.status = true
 				this.dragging.event = event
 			},
 			onMouseEnterInterval({date, time}, slot) {
-				if (this.dragging.status) {
-					const duration = moment.range(moment(this.dragging.event.start), moment(this.dragging.event.end)).duration()
-					this.dragging.event.start = `${date} ${time}`
-					this.dragging.event.end = moment(this.dragging.event.start).add(duration).format('YYYY-MM-DD HH:mm')
-				} else if (this.resizing.status) {
-					if (this.resizing.slot === 'top') {
-						this.resizing.event.start = `${moment(this.resizing.event.start).format('YYYY-MM-DD')} ${time}`
+				if (this.displayGhosts) {
+					let start, end, event
+					if (this.dragging.status) {
+						event = this.dragging.event
+						const duration = moment.range(moment(this.dragging.event.ghost.start), moment(this.dragging.event.ghost.end)).duration()
+						start = `${date} ${time}`
+						end = moment(`${date} ${time}`).add(duration).format('YYYY-MM-DD HH:mm')
+					} else if (this.resizing.status) {
+						event = this.resizing.event
+						if (this.resizing.slot === 'top') {
+							start = `${moment(this.resizing.event.ghost.start).format('YYYY-MM-DD')} ${time}`
+							end = this.resizing.event.end
+						} else {
+							start = this.resizing.event.start
+							end = moment(`${moment(this.resizing.event.ghost.end).format('YYYY-MM-DD')} ${time}`).add({minutes: this.intervalMinutes}).format('YYYY-MM-DD HH:mm')
+						}
+					}
+					if (moment(end).subtract({minutes: this.intervalMinutes}).isSameOrAfter(moment(start))) {
+						this.events.forEach(e => e.ghost = {...e.tmpGhost})
+						event.ghost = {
+							...this.clone(event),
+							start,
+							end
+						}
+						this.schedule(event.ghost, slot)
+					}
+				}
+			},
+			schedule(ghost, slot) {
+				const before = []
+				const after = []
+				// Gathering tmpGhosts before, same or after and overlapping before, same or after the ghost
+				this.tmpGhosts.filter(g => g.index !== ghost.index && moment(g.start).isSame(moment(ghost.start), 'day')).forEach(g => {
+					if (moment(g.start).isBefore(moment(ghost.start))) {
+						before.push(g)
+					} else if (moment(g.start).isSame(moment(ghost.start))) {
+						if (slot === 'left') {
+							before.push(g)
+						} else {
+							after.push(g)
+						}
 					} else {
-						this.resizing.event.end = moment(`${moment(this.resizing.event.end).format('YYYY-MM-DD')} ${time}`).add({minutes: this.intervalMinutes}).format('YYYY-MM-DD HH:mm')
+						after.push(g)
+					}
+				})
+				// Sorting gathered tmpGhosts
+				before.sort((first, second) => {
+					return moment(first.start).isBefore(moment(second.start)) ? 1 : moment(first.start).isSame(moment(second.start)) ? 0 : -1
+				})
+				after.sort((first, second) => {
+					return moment(first.start).isAfter(moment(second.start)) ? 1 : moment(first.start).isSame(moment(second.start)) ? 0 : -1
+				})
+				// Scheduling
+				if (before.length) {
+					const previous = before.shift()
+					this._scheduleBefore(ghost, previous, before)
+				}
+				if (after.length) {
+					const next = after.shift()
+					this._scheduleAfter(ghost, next, after)
+				}
+			},
+			_scheduleBefore(after, before, remaining) {
+				if (moment(after.start).isBefore(moment(before.end))) {
+					const diff = moment.duration(moment(before.end).diff(moment(after.start)))
+					const ghost = this.ghosts.find(ghost => ghost.index === before.index)
+					if (ghost.locked) {
+					} else {
+						ghost.start = moment(ghost.start).subtract(diff).format('YYYY-MM-DD HH:mm')
+						ghost.end = moment(ghost.end).subtract(diff).format('YYYY-MM-DD HH:mm')
+					}
+					if (remaining.length) {
+						this._scheduleBefore(ghost, remaining.shift(), remaining)
+					}
+				}
+			},
+			_scheduleAfter(before, after, remaining) {
+				if (moment(before.end).isAfter(moment(after.start))) {
+					const diff = moment.duration(moment(before.end).diff(moment(after.start)))
+					const ghost = this.ghosts.find(ghost => ghost.index === after.index)
+					if (ghost.locked) {
+					} else {
+						ghost.start = moment(ghost.start).add(diff).format('YYYY-MM-DD HH:mm')
+						ghost.end = moment(ghost.end).add(diff).format('YYYY-MM-DD HH:mm')
+					}
+					if (remaining.length) {
+						this._scheduleAfter(ghost, remaining.shift(), remaining)
 					}
 				}
 			},
@@ -337,6 +431,10 @@
 			},
 			remove(event) {
 				this.events = this.events.filter(e => e !== event)
+			},
+			clone(event) {
+				const {ghost, tmpGhost, ...clone} = event
+				return clone
 			},
 			ref(event) {
 				const ref = this.$refs[`event-${event.index}`]
