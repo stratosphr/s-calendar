@@ -22,120 +22,126 @@
                 />
             </template>
             <template #event="{day}">
-                <div
-                    :key="event.index"
-                    :ref="`event-${event.index}`"
-                    :style="{ position: 'absolute', left: 0, right: 0, ...geometry(event), overflow: 'hidden', opacity: displayGhosts ? 0.5 : 1 }"
-                    class="s-calendar-event"
-                    v-for="event in eventsOnDate(day.date)"
-                    v-if="$refs.calendar"
+                <transition-group
+                    :duration="{ leave: 0, enter: 0 }"
+                    appear
+                    name="s-calendar-events-transition"
                 >
-
-                    <!-- OVERLAY -->
-                    <v-overlay
-                        :value="displayGhosts && (event.locked === true || (!droppable && eventsOnDate(day.date).includes(ghost)))"
-                        absolute
-                        color="error"
-                    >
-                        <v-expand-transition appear>
-                            <div class="fill-height">
-                                <v-icon
-                                    color="error"
-                                    v-text="'fa-lock'"
-                                />
-                            </div>
-                        </v-expand-transition>
-                    </v-overlay>
-
-                    <!-- HEADER -->
                     <div
-                        :class="`s-calendar-event-header ${eventColor} overflow-hidden`"
-                        :style="{ height: `${intervalHeight - 3}px` }"
+                        :class="`s-calendar-event ${ghost === event ? '' : 's-calendar-events-transition-item'}`"
+                        :key="event.index"
+                        :ref="`event-${event.index}`"
+                        :style="{ position: 'absolute', left: 0, right: 0, ...geometry(event), overflow: 'hidden', opacity: displayGhosts ? 0.5 : 1 }"
+                        v-for="event in eventsOnDate(day.date)"
+                        v-if="$refs.calendar"
                     >
-                        <v-row
-                            :class="headerClass(event)"
-                            :style="headerCss(event)"
-                            no-gutters
+
+                        <!-- OVERLAY -->
+                        <v-overlay
+                            :value="displayGhosts && (event.locked === true || (!droppable && eventsOnDate(day.date).includes(ghost)))"
+                            absolute
+                            color="error"
                         >
+                            <v-expand-transition appear>
+                                <div class="fill-height">
+                                    <v-icon
+                                        color="error"
+                                        v-text="'fa-lock'"
+                                    />
+                                </div>
+                            </v-expand-transition>
+                        </v-overlay>
 
-                            <!-- TITLE -->
-                            <v-col
-                                @mousedown="dragStart(event)"
-                                class="s-calendar-event-title overflow-hidden mr-2"
+                        <!-- HEADER -->
+                        <div
+                            :class="`s-calendar-event-header ${eventColor} overflow-hidden`"
+                            :style="{ height: `${intervalHeight - 3}px` }"
+                        >
+                            <v-row
+                                :class="headerClass(event)"
+                                :style="headerCss(event)"
+                                no-gutters
                             >
-                                <slot
-                                    :event="event"
-                                    name="event-title"
-                                />
-                            </v-col>
 
-                            <!-- CONTROLS -->
-                            <v-col
-                                :key="controlIndex"
-                                class="s-calendar-event-controls"
-                                cols="auto"
-                                v-for="(control, controlIndex) in controls"
-                                v-if="!displayGhosts"
-                            >
-                                <s-calendar-event-control
-                                    :icon="control.icon(event)"
-                                    :icon-color="control.iconColor ? control.iconColor(event) : undefined"
-                                    :icon-disabled="control.iconDisabled ? control.iconDisabled(event) : undefined"
-                                    :icon-size="controlsIconsSize"
-                                    @click="(mouseEvent) => control.click(event, mouseEvent)"
-                                />
-                            </v-col>
+                                <!-- TITLE -->
+                                <v-col
+                                    @mousedown="dragStart(event)"
+                                    class="s-calendar-event-title overflow-hidden mr-2"
+                                >
+                                    <slot
+                                        :event="event"
+                                        name="event-title"
+                                    />
+                                </v-col>
 
-                        </v-row>
-                    </div>
+                                <!-- CONTROLS -->
+                                <v-col
+                                    :key="controlIndex"
+                                    class="s-calendar-event-controls"
+                                    cols="auto"
+                                    v-for="(control, controlIndex) in controls"
+                                    v-if="!displayGhosts"
+                                >
+                                    <s-calendar-event-control
+                                        :icon="control.icon(event)"
+                                        :icon-color="control.iconColor ? control.iconColor(event) : undefined"
+                                        :icon-disabled="control.iconDisabled ? control.iconDisabled(event) : undefined"
+                                        :icon-size="controlsIconsSize"
+                                        @click="(mouseEvent) => control.click(event, mouseEvent)"
+                                    />
+                                </v-col>
 
-                    <!-- BODY -->
-                    <div
-                        :class="`s-calendar-event-body ${eventColor} overflow-hidden`"
-                        :style="{ height: `${geometry(event).height.replace('px', '') - intervalHeight + 3}px` }"
-                    >
-                        <slot
-                            :event="event"
-                            name="event-body"
+                            </v-row>
+                        </div>
+
+                        <!-- BODY -->
+                        <div
+                            :class="`s-calendar-event-body ${eventColor} overflow-hidden`"
+                            :style="{ height: `${geometry(event).height.replace('px', '') - intervalHeight + 3}px` }"
+                        >
+                            <slot
+                                :event="event"
+                                name="event-body"
+                            />
+                        </div>
+
+                        <!-- RESIZER TOP -->
+                        <div
+                            :style="{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', cursor: 'row-resize' }"
+                            @mousedown="resize(event, 'top')"
+                            class="s-calendar-event-resizer"
+                            v-if="!event.locked"
                         />
-                    </div>
 
-                    <!-- RESIZER TOP -->
-                    <div
-                        :style="{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', cursor: 'row-resize' }"
-                        @mousedown="resize(event, 'top')"
-                        class="s-calendar-event-resizer"
-                        v-if="!event.locked"
-                    />
-
-                    <!-- RESIZER BOTTOM -->
-                    <div
-                        :style="{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '4px', cursor: 'row-resize' }"
-                        @mousedown="resize(event, 'bottom')"
-                        class="s-calendar-event-resizer"
-                        v-if="!event.locked"
-                    />
-
-                    <!-- MENU -->
-                    <v-menu
-                        :activator="ref(event)"
-                        :close-on-content-click="false"
-                        :left="day.weekday > 3"
-                        :nudge-left="day.weekday > 3 ? 3 : 0"
-                        :nudge-right="day.weekday <= 3 ? 3 : 0"
-                        :open-on-click="false"
-                        :right="day.weekday <= 3"
-                        offset-x
-                        v-if="$scopedSlots['event-menu']"
-                        v-model="event.showMenu"
-                    >
-                        <slot
-                            :event="event"
-                            name="event-menu"
+                        <!-- RESIZER BOTTOM -->
+                        <div
+                            :style="{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '4px', cursor: 'row-resize' }"
+                            @mousedown="resize(event, 'bottom')"
+                            class="s-calendar-event-resizer"
+                            v-if="!event.locked"
                         />
-                    </v-menu>
 
-                </div>
+                        <!-- MENU -->
+                        <v-menu
+                            :activator="ref(event)"
+                            :close-on-content-click="false"
+                            :left="day.weekday > 3"
+                            :nudge-left="day.weekday > 3 ? 3 : 0"
+                            :nudge-right="day.weekday <= 3 ? 3 : 0"
+                            :open-on-click="false"
+                            :right="day.weekday <= 3"
+                            offset-x
+                            v-if="$scopedSlots['event-menu']"
+                            v-model="event.showMenu"
+                        >
+                            <slot
+                                :event="event"
+                                name="event-menu"
+                            />
+                        </v-menu>
+
+                    </div>
+                </transition-group>
             </template>
             <template #interval="{date, time}">
                 <div class="interval fill-height">
@@ -560,5 +566,10 @@
 
     .s-calendar-event-header > * {
         height: 100% !important;
+    }
+
+    /*noinspection CssUnusedSymbol*/
+    .s-calendar-events-transition-item {
+        transition: transform 500ms;
     }
 </style>
