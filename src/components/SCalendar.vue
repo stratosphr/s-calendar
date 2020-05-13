@@ -31,13 +31,6 @@
                     v-if="$refs.calendar"
                 >
 
-                    <!-- RESIZER TOP -->
-                    <div
-                        :style="{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', cursor: 'row-resize' }"
-                        @mousedown="resize(event, 'top')"
-                        class="s-calendar-event-resizer"
-                    />
-
                     <!-- HEADER -->
                     <div
                         :class="`s-calendar-event-header ${eventColor} overflow-hidden`"
@@ -91,11 +84,20 @@
                         />
                     </div>
 
+                    <!-- RESIZER TOP -->
+                    <div
+                        :style="{ position: 'absolute', top: 0, left: 0, right: 0, height: '4px', cursor: 'row-resize' }"
+                        @mousedown="resize(event, 'top')"
+                        class="s-calendar-event-resizer"
+                        v-if="!event.locked"
+                    />
+
                     <!-- RESIZER BOTTOM -->
                     <div
                         :style="{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '4px', cursor: 'row-resize' }"
                         @mousedown="resize(event, 'bottom')"
                         class="s-calendar-event-resizer"
+                        v-if="!event.locked"
                     />
 
                     <!-- MENU -->
@@ -327,8 +329,10 @@
 				}
 			},
 			dragStart(event) {
-				this.dragging.status = true
-				this.dragging.event = event
+				if (!event.locked) {
+					this.dragging.status = true
+					this.dragging.event = event
+				}
 			},
 			drag({date, time}, slot) {
 				if (this.displayGhosts) {
