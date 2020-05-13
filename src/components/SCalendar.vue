@@ -475,6 +475,8 @@
 </script>
 
 <style>
+    @import '~vuetify/dist/vuetify.css';
+
     /*noinspection CssUnusedSymbol*/
     .v-calendar {
         user-select: none;
