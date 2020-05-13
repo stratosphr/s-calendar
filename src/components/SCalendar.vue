@@ -570,6 +570,6 @@
 
     /*noinspection CssUnusedSymbol*/
     .s-calendar-events-transition-item {
-        transition: transform 500ms;
+        transition: transform 500ms ease;
     }
 </style>
