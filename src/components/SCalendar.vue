@@ -206,7 +206,7 @@
 			},
 			headerClass: {
 				type: Function,
-				default: (_) => (['primary'])
+				default: (_) => ['primary']
 			}
 		},
 
