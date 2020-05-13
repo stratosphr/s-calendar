@@ -32,18 +32,18 @@
                 >
 
                     <v-overlay
-                        :value="displayGhosts && event.locked"
+                        :value="displayGhosts && (event.locked === true || (!droppable && eventsOnDate(day.date).includes(ghost)))"
                         absolute
                         color="error"
                     >
-                        <v-fade-transition appear>
+                        <v-expand-transition appear>
                             <div class="fill-height">
                                 <v-icon
                                     color="error"
                                     v-text="'fa-lock'"
                                 />
                             </div>
-                        </v-fade-transition>
+                        </v-expand-transition>
                     </v-overlay>
 
                     <!-- HEADER -->
@@ -214,6 +214,7 @@
 				event: null,
 				slot: null
 			},
+			droppable: true,
 			events: [
 				{
 					index: 0,
@@ -273,10 +274,12 @@
 					})
 					$('.interval').css({zIndex: 1})
 				} else {
-					this.events.forEach(e => {
-						e.start = e.ghost.start
-						e.end = e.ghost.end
-					})
+					if (this.droppable) {
+						this.events.forEach(e => {
+							e.start = e.ghost.start
+							e.end = e.ghost.end
+						})
+					}
 				}
 			}
 		},
@@ -323,6 +326,9 @@
 			displayGhosts() {
 				return this.dragging.status || this.resizing.status
 			},
+			ghost() {
+				return (this.dragging.status && this.dragging.event.ghost) || (this.resizing.status && this.resizing.event.ghost)
+			},
 			ghosts() {
 				return this.events.map(event => event.ghost)
 			},
@@ -354,17 +360,17 @@
 					let start, end, event
 					if (this.dragging.status) {
 						event = this.dragging.event
-						const duration = moment.range(moment(this.dragging.event.ghost.start), moment(this.dragging.event.ghost.end)).duration()
+						const duration = moment.range(moment(event.ghost.start), moment(event.ghost.end)).duration()
 						start = `${date} ${time}`
 						end = moment(`${date} ${time}`).add(duration).format('YYYY-MM-DD HH:mm')
 					} else if (this.resizing.status) {
 						event = this.resizing.event
 						if (this.resizing.slot === 'top') {
-							start = `${moment(this.resizing.event.ghost.start).format('YYYY-MM-DD')} ${time}`
+							start = `${moment(event.ghost.start).format('YYYY-MM-DD')} ${time}`
 							end = this.resizing.event.end
 						} else {
 							start = this.resizing.event.start
-							end = moment(`${moment(this.resizing.event.ghost.end).format('YYYY-MM-DD')} ${time}`).add({minutes: this.intervalMinutes}).format('YYYY-MM-DD HH:mm')
+							end = moment(`${moment(event.ghost.end).format('YYYY-MM-DD')} ${time}`).add({minutes: this.intervalMinutes}).format('YYYY-MM-DD HH:mm')
 						}
 					}
 					if (moment(end).subtract({minutes: this.intervalMinutes}).isSameOrAfter(moment(start))) {
@@ -374,6 +380,7 @@
 							start,
 							end
 						}
+						this.droppable = true
 						this.schedule(event.ghost, slot)
 					}
 				}
@@ -417,6 +424,7 @@
 					const diff = moment.duration(moment(before.end).diff(moment(after.start)))
 					const ghost = this.ghosts.find(ghost => ghost.index === before.index)
 					if (ghost.locked) {
+						this.droppable = false
 					} else {
 						ghost.start = moment(ghost.start).subtract(diff).format('YYYY-MM-DD HH:mm')
 						ghost.end = moment(ghost.end).subtract(diff).format('YYYY-MM-DD HH:mm')
@@ -431,6 +439,7 @@
 					const diff = moment.duration(moment(before.end).diff(moment(after.start)))
 					const ghost = this.ghosts.find(ghost => ghost.index === after.index)
 					if (ghost.locked) {
+						this.droppable = false
 					} else {
 						ghost.start = moment(ghost.start).add(diff).format('YYYY-MM-DD HH:mm')
 						ghost.end = moment(ghost.end).add(diff).format('YYYY-MM-DD HH:mm')
