@@ -14,9 +14,9 @@
             :interval-count="intervalCount"
             :interval-height="intervalHeight"
             :interval-minutes="intervalMinutes"
+            :interval-width="intervalWidth"
             :short-intervals="false"
             :start="start.format('YYYY-MM-DD')"
-            :interval-width="intervalWidth"
             :weekdays="weekdays"
             event-color="transparent"
             ref="calendar"
@@ -282,6 +282,30 @@
 					start: '2020-05-12 01:30',
 					end: '2020-05-12 01:45',
 					showMenu: false
+				},
+				{
+					index: 6,
+					start: '2020-05-19 02:00',
+					end: '2020-05-19 02:45',
+					showMenu: false
+				},
+				{
+					index: 7,
+					start: '2020-05-20 03:00',
+					end: '2020-05-20 03:45',
+					showMenu: false
+				},
+				{
+					index: 8,
+					start: '2020-05-05 02:00',
+					end: '2020-05-05 04:45',
+					showMenu: false
+				},
+				{
+					index: 9,
+					start: '2020-05-05 01:30',
+					end: '2020-05-05 02:00',
+					showMenu: false
 				}
 			]
 		}),
@@ -310,7 +334,11 @@
 						this.$set(e, 'tmpGhost', this.clone(e))
 						this.$set(e, 'ghost', this.clone(e))
 					})
-					$('.interval').css({zIndex: 1})
+					$('.interval').css({
+						position: 'relative',
+						zIndex: 1
+					})
+					// $('.s-calendar-event').css({ position: 'absolute', zIndex: 0})
 				} else {
 					if (this.droppable) {
 						this.events.forEach(e => {
@@ -383,6 +411,10 @@
 		},
 
 		methods: {
+			move(amount) {
+				this.start = moment(this.start).add({week: amount})
+				this.end = moment(this.end).add({week: amount})
+			},
 			eventsOnDate(date) {
 				return (this.displayGhosts ? this.ghosts : this.events).filter(event => moment(event.start).format('YYYY-MM-DD') === date)
 			},

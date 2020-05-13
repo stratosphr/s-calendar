@@ -12,7 +12,31 @@
             ref="calendar"
         >
             <template #calendar-controls>
-                Calendar controls
+                <v-row no-gutters>
+                    <v-col>
+                        <v-btn
+                            @click="$refs.calendar.move(-1)"
+                            icon
+                            rounded
+                            small
+                        >
+                            <v-icon
+                                size="20"
+                                v-text="'fa-angle-left'"
+                            />
+                        </v-btn>
+                    </v-col>
+                    <v-btn
+                        @click="$refs.calendar.move(1)"
+                        icon
+                        small
+                    >
+                        <v-icon
+                            size="20"
+                            v-text="'fa-angle-right'"
+                        />
+                    </v-btn>
+                </v-row>
             </template>
             <template #day-header="{date}">
                 <div class="text-capitalize text-truncate caption px-1">
