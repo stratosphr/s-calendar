@@ -374,7 +374,7 @@
 							end = moment(`${moment(event.ghost.end).format('YYYY-MM-DD')} ${time}`).add({minutes: this.intervalMinutes}).format('YYYY-MM-DD HH:mm')
 						}
 					}
-					if (moment(end).subtract({minutes: this.intervalMinutes}).isSameOrAfter(moment(start))) {
+					if (moment(end).isAfter(moment(start))) {
 						this.events.forEach(e => e.ghost = {...e.tmpGhost})
 						event.ghost = {
 							...this.clone(event),
