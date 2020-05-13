@@ -39,7 +39,8 @@
             <template #event-menu="{event}">
                 <v-card max-width="300">
                     <v-card-text>
-                        {{event}}
+                        <div v-text="event" />
+                        <v-btn>Click</v-btn>
                     </v-card-text>
                 </v-card>
             </template>
@@ -85,7 +86,7 @@
 							return event.showMenu ? 'white' : undefined
 						},
 						click: (event) => {
-							this.$set(event, 'showMenu', !event.showMenu)
+							event.showMenu = !event.showMenu
 						}
 					}
 				]

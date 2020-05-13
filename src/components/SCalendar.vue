@@ -31,6 +31,7 @@
                     v-if="$refs.calendar"
                 >
 
+                    <!-- OVERLAY -->
                     <v-overlay
                         :value="displayGhosts && (event.locked === true || (!droppable && eventsOnDate(day.date).includes(ghost)))"
                         absolute
@@ -118,6 +119,7 @@
                     <!-- MENU -->
                     <v-menu
                         :activator="ref(event)"
+                        :close-on-content-click="false"
                         :left="day.weekday > 3"
                         :nudge-left="day.weekday > 3 ? 3 : 0"
                         :nudge-right="day.weekday <= 3 ? 3 : 0"
@@ -231,32 +233,38 @@
 				{
 					index: 0,
 					start: '2020-05-16 02:15',
-					end: '2020-05-16 03:15'
+					end: '2020-05-16 03:15',
+					showMenu: false
 				},
 				{
 					index: 1,
 					start: '2020-05-12 03:30',
-					end: '2020-05-12 04:45'
+					end: '2020-05-12 04:45',
+					showMenu: false
 				},
 				{
 					index: 2,
 					start: '2020-05-14 10:15',
-					end: '2020-05-14 10:45'
+					end: '2020-05-14 10:45',
+					showMenu: false
 				},
 				{
 					index: 3,
 					start: '2020-05-11 02:00',
-					end: '2020-05-11 03:30'
+					end: '2020-05-11 03:30',
+					showMenu: false
 				},
 				{
 					index: 4,
 					start: '2020-05-13 03:30',
-					end: '2020-05-13 04:30'
+					end: '2020-05-13 04:30',
+					showMenu: false
 				},
 				{
 					index: 5,
 					start: '2020-05-12 01:30',
-					end: '2020-05-12 01:45'
+					end: '2020-05-12 01:45',
+					showMenu: false
 				}
 			]
 		}),
