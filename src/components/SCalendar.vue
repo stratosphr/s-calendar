@@ -280,6 +280,7 @@
 							e.end = e.ghost.end
 						})
 					}
+					this.droppable = true
 				}
 			}
 		},
