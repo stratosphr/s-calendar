@@ -5,55 +5,13 @@
             ref="s-calendar-controls"
         >
             <slot name="calendar-controls">
-                <v-row
-                    no-gutters
+                <s-calendar-controls
+                    :color="color"
+                    :date-picker-event-color-for-date="datePickerEventColorForDate"
+                    :date-picker-events="datePickerEvents"
                     v-if="!noDefaultCalendarControls"
-                >
-                    <v-col>
-                        <v-icon
-                            @click="move(-1)"
-                            size="20"
-                            v-text="'fa-angle-left'"
-                        />
-                    </v-col>
-                    <v-col>
-                        <v-icon
-                            @click="move(0)"
-                            size="11"
-                            v-text="'fa-circle'"
-                        />
-                    </v-col>
-                    <v-col>
-                        <v-icon
-                            @click="move(1)"
-                            size="20"
-                            v-text="'fa-angle-right'"
-                        />
-                    </v-col>
-                    <v-col cols="12">
-                        <v-menu offset-y>
-                            <template #activator="{on}">
-                                <v-btn
-                                    icon
-                                    v-on="on"
-                                >
-                                    <v-icon
-                                        size="20"
-                                        v-text="'fa-calendar-day'"
-                                    />
-                                </v-btn>
-                            </template>
-                            <v-date-picker
-                                :color="color"
-                                :events="datePickerEvents"
-                                next-icon="fa-angle-right"
-                                no-title
-                                prev-icon="fa-angle-left"
-                                v-model="dateModel"
-                            />
-                        </v-menu>
-                    </v-col>
-                </v-row>
+                    v-model="dateModel"
+                />
             </slot>
         </div>
         <v-calendar
@@ -235,6 +193,7 @@
 	import $                     from 'jquery'
 	import SCalendarEventControl from './SCalendarEventControl'
 	import SCalendarDayHeader    from './SCalendarDayHeader'
+	import SCalendarControls     from './SCalendarControls'
 
 	const moment = extendMoment(Moment)
 	moment.locale('fr')
@@ -243,6 +202,7 @@
 		name: 's-calendar',
 
 		components: {
+			SCalendarControls,
 			SCalendarDayHeader,
 			SCalendarEventControl
 		},
@@ -498,17 +458,6 @@
 		},
 
 		methods: {
-			move(amount) {
-				if (amount === 0) {
-					this.start = moment().startOf('week')
-					this.end = moment().endOf('week')
-					this.date = moment().format('YYYY-MM-DD')
-				} else {
-					this.start = moment(this.start).add({week: amount})
-					this.end = moment(this.end).add({week: amount})
-					this.date = this.start.format('YYYY-MM-DD')
-				}
-			},
 			datePickerEvents(date) {
 				return this.eventsOnDate(date).length ? this.datePickerEventColorForDate(date) : false
 			},
