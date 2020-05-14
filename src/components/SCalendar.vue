@@ -45,6 +45,7 @@
                             </template>
                             <v-date-picker
                                 :color="color"
+                                :events="datePickerEvents"
                                 next-icon="fa-angle-right"
                                 no-title
                                 prev-icon="fa-angle-left"
@@ -258,6 +259,10 @@
 			color: {
 				type: String,
 				default: 'primary'
+			},
+			datePickerEventColorForDate: {
+				type: Function,
+				default: (_) => 'secondary'
 			},
 			eventColor: {
 				type: String,
@@ -488,6 +493,9 @@
 					this.end = moment(this.end).add({week: amount})
 					this.date = this.start.format('YYYY-MM-DD')
 				}
+			},
+			datePickerEvents(date) {
+				return this.eventsOnDate(date).length ? this.datePickerEventColorForDate(date) : false
 			},
 			eventsOnDate(date) {
 				return (this.displayGhosts ? this.ghosts : this.events).filter(event => moment(event.start).format('YYYY-MM-DD') === date)

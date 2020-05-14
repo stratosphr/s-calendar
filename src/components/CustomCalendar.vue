@@ -2,14 +2,15 @@
     <div>
         <s-calendar
             :custom-controls="customControls"
+            :date-picker-event-color-for-date="datePickerEventColorForDate"
             :first-interval="6"
             :header-class="headerClass"
             :header-css="headerCss"
             :interval-count="14"
             :interval-minutes="15"
             :weekdays="[1, 2, 3, 4, 5, 6]"
-            event-color="transparent"
             color="cyan"
+            event-color="transparent"
             ref="calendar"
         >
             <template #day-header="{ past, present, date }">
@@ -104,6 +105,9 @@
 		methods: {
 			formattedDate(date) {
 				return moment(date).format('dddd\xa0-\xa0DD\xa0MMM\xa0YYYY')
+			},
+			datePickerEventColorForDate() {
+				return 'teal'
 			}
 		}
 	}
