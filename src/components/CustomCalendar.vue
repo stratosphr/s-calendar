@@ -107,7 +107,7 @@
 				return moment(date).format('dddd\xa0-\xa0DD\xa0MMM\xa0YYYY')
 			},
 			datePickerEventColorForDate() {
-				return 'teal'
+				return 'teal darken-1'
 			}
 		}
 	}

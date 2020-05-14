@@ -262,7 +262,7 @@
 			},
 			datePickerEventColorForDate: {
 				type: Function,
-				default: (_) => 'secondary'
+				default: (_) => 'primary lighten-3'
 			},
 			eventColor: {
 				type: String,
