@@ -386,6 +386,8 @@
 		watch: {
 			displayGhosts(displayGhosts) {
 				if (displayGhosts) {
+					this.contextMenu.value = false
+					this.contextMenu.time = {}
 					this.events.forEach(e => {
 						this.$set(e, 'showMenu', false)
 						this.$set(e, 'tmpGhost', this.clone(e))
