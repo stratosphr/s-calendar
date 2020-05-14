@@ -4,7 +4,56 @@
             class="overflow-hidden"
             ref="s-calendar-controls"
         >
-            <slot name="calendar-controls" />
+            <slot name="calendar-controls">
+                <v-row
+                    no-gutters
+                    v-if="!noDefaultCalendarControls"
+                >
+                    <v-col>
+                        <v-icon
+                            @click="move(-1)"
+                            size="20"
+                            v-text="'fa-angle-left'"
+                        />
+                    </v-col>
+                    <v-col>
+                        <v-icon
+                            @click="move(0)"
+                            size="11"
+                            v-text="'fa-circle'"
+                        />
+                    </v-col>
+                    <v-col>
+                        <v-icon
+                            @click="move(1)"
+                            size="20"
+                            v-text="'fa-angle-right'"
+                        />
+                    </v-col>
+                    <v-col cols="12">
+                        <v-menu offset-y>
+                            <template #activator="{on}">
+                                <v-btn
+                                    icon
+                                    v-on="on"
+                                >
+                                    <v-icon
+                                        size="20"
+                                        v-text="'fa-calendar-day'"
+                                    />
+                                </v-btn>
+                            </template>
+                            <v-date-picker
+                                color="cyan"
+                                next-icon="fa-angle-right"
+                                no-title
+                                prev-icon="fa-angle-left"
+                                v-model="dateModel"
+                            />
+                        </v-menu>
+                    </v-col>
+                </v-row>
+            </slot>
         </div>
         <v-calendar
             :end="end.format('YYYY-MM-DD')"
@@ -183,6 +232,9 @@
 		components: {SCalendarEventControl},
 
 		props: {
+			noDefaultCalendarControls: {
+				type: Boolean
+			},
 			weekdays: {
 				type: Array,
 				default: () => [1, 2, 3, 4, 5, 6, 0]
@@ -236,6 +288,7 @@
 		data: () => ({
 			start: moment().startOf('week'),
 			end: moment().endOf('week'),
+			date: moment().format('YYYY-MM-DD'),
 			dragging: {
 				status: false,
 				event: null
@@ -352,6 +405,16 @@
 		},
 
 		computed: {
+			dateModel: {
+				get() {
+					return this.date
+				},
+				set(date) {
+					this.start = moment(date).startOf('week')
+					this.end = moment(date).endOf('week')
+					this.date = date
+				}
+			},
 			containers() {
 				return Array.from(moment.range(this.start, this.end).by('day'), (day => ({
 					start: day.format('YYYY-MM-DD 00:00'),
@@ -412,8 +475,13 @@
 
 		methods: {
 			move(amount) {
-				this.start = moment(this.start).add({week: amount})
-				this.end = moment(this.end).add({week: amount})
+				if (amount === 0) {
+					this.start = moment().startOf('week')
+					this.end = moment().endOf('week')
+				} else {
+					this.start = moment(this.start).add({week: amount})
+					this.end = moment(this.end).add({week: amount})
+				}
 			},
 			eventsOnDate(date) {
 				return (this.displayGhosts ? this.ghosts : this.events).filter(event => moment(event.start).format('YYYY-MM-DD') === date)
