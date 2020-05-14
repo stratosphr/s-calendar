@@ -478,9 +478,11 @@
 				if (amount === 0) {
 					this.start = moment().startOf('week')
 					this.end = moment().endOf('week')
+					this.date = moment().format('YYYY-MM-DD')
 				} else {
 					this.start = moment(this.start).add({week: amount})
 					this.end = moment(this.end).add({week: amount})
+					this.date = this.start.format('YYYY-MM-DD')
 				}
 			},
 			eventsOnDate(date) {
