@@ -13,6 +13,14 @@
             event-color="transparent"
             ref="calendar"
         >
+            <template #context-menu="{time}">
+                <v-card class="elevation-1">
+                    <v-card-text>
+                        {{time.date}}
+                        {{time.time}}
+                    </v-card-text>
+                </v-card>
+            </template>
             <template #event-title>
                 <div>
                     <div class="text-truncate caption">Long header text on top</div>

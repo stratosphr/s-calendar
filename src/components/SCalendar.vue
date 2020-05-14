@@ -1,5 +1,20 @@
 <template>
-    <v-sheet height="400">
+    <v-sheet
+        class="s-calendar"
+        height="400"
+    >
+        <v-menu
+            :position-x="contextMenu.x"
+            :position-y="contextMenu.y"
+            absolute
+            offset-x
+            v-model="contextMenu.value"
+        >
+            <slot
+                :time="contextMenu.time"
+                name="context-menu"
+            />
+        </v-menu>
         <div
             class="overflow-hidden"
             ref="s-calendar-controls"
@@ -26,6 +41,7 @@
             :short-intervals="false"
             :start="start.format('YYYY-MM-DD')"
             :weekdays="weekdays"
+            @contextmenu:time="(event, mouseEvent) => onContextMenu(event, mouseEvent)"
             event-color="transparent"
             ref="calendar"
             type="week"
@@ -273,6 +289,10 @@
 			start: moment().startOf('week'),
 			end: moment().endOf('week'),
 			date: moment().format('YYYY-MM-DD'),
+			contextMenu: {
+				value: false,
+				time: {}
+			},
 			dragging: {
 				status: false,
 				event: null
@@ -592,6 +612,15 @@
 			},
 			remove(event) {
 				this.events = this.events.filter(e => e !== event)
+			},
+			onContextMenu(time) {
+				this.contextMenu.value = false
+				this.contextMenu.time = time
+				this.contextMenu.x = window.event.clientX
+				this.contextMenu.y = window.event.clientY
+				this.$nextTick(function () {
+					this.contextMenu.value = true
+				})
 			},
 			overlapsForbiddenRange(event) {
 				return this.forbiddenRanges.some(forbiddenPeriod => moment.range(moment(event.start), moment(event.end)).overlaps(forbiddenPeriod))
