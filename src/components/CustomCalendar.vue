@@ -13,18 +13,6 @@
             event-color="transparent"
             ref="calendar"
         >
-            <template #day-header="{ past, present, date }">
-                <transition
-                    :name="past ? 'scroll-x-transition' : present ? 'scroll-y-transition' : 'scroll-x-reverse-transition'"
-                    appear
-                >
-                    <div>
-                        <div class="text-capitalize text-truncate caption px-1">
-                            {{ formattedDate(date) }}
-                        </div>
-                    </div>
-                </transition>
-            </template>
             <template #event-title>
                 <div>
                     <div class="text-truncate caption">Long header text on top</div>
@@ -58,16 +46,20 @@
 </template>
 
 <script>
-	import moment    from 'moment'
-	import SCalendar from './SCalendar'
-	import colors    from 'vuetify/lib/util/colors'
+	import moment             from 'moment'
+	import SCalendar          from './SCalendar'
+	import colors             from 'vuetify/lib/util/colors'
+	import SCalendarDayHeader from './SCalendarDayHeader'
 
 	moment.locale('fr')
 
 	export default {
 		name: 'CustomCalendar',
 
-		components: {SCalendar},
+		components: {
+			SCalendarDayHeader,
+			SCalendar
+		},
 
 		data: () => ({
 			headerClass: () => ['pl-1'],
@@ -103,9 +95,6 @@
 		},
 
 		methods: {
-			formattedDate(date) {
-				return moment(date).format('dddd\xa0-\xa0DD\xa0MMM\xa0YYYY')
-			},
 			datePickerEventColorForDate() {
 				return 'teal darken-1'
 			}

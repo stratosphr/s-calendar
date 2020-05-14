@@ -76,7 +76,18 @@
                 <slot
                     name="day-header"
                     v-bind="props"
-                />
+                >
+                    <transition
+                        :name="props.past ? 'scroll-x-transition' : props.present ? 'scroll-y-transition' : 'scroll-x-reverse-transition'"
+                        appear
+                    >
+                        <s-calendar-day-header
+                            :color="color"
+                            :date="props.date"
+                            :present="props.present"
+                        />
+                    </transition>
+                </slot>
             </template>
             <template #event="{day}">
                 <transition-group
@@ -223,6 +234,7 @@
 	import { extendMoment }      from 'moment-range'
 	import $                     from 'jquery'
 	import SCalendarEventControl from './SCalendarEventControl'
+	import SCalendarDayHeader    from './SCalendarDayHeader'
 
 	const moment = extendMoment(Moment)
 	moment.locale('fr')
@@ -230,7 +242,10 @@
 	export default {
 		name: 's-calendar',
 
-		components: {SCalendarEventControl},
+		components: {
+			SCalendarDayHeader,
+			SCalendarEventControl
+		},
 
 		props: {
 			noDefaultCalendarControls: {
