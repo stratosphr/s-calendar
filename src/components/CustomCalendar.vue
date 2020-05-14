@@ -9,6 +9,7 @@
             :interval-minutes="15"
             :weekdays="[1, 2, 3, 4, 5, 6]"
             event-color="transparent"
+            color="cyan"
             ref="calendar"
         >
             <template #day-header="{ past, present, date }">

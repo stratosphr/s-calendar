@@ -44,7 +44,7 @@
                                 </v-btn>
                             </template>
                             <v-date-picker
-                                color="cyan"
+                                :color="color"
                                 next-icon="fa-angle-right"
                                 no-title
                                 prev-icon="fa-angle-left"
@@ -254,6 +254,10 @@
 			customControls: {
 				type: Array,
 				default: () => []
+			},
+			color: {
+				type: String,
+				default: 'primary'
 			},
 			eventColor: {
 				type: String,
