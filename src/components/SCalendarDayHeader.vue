@@ -5,9 +5,7 @@
         justify="center"
         no-gutters
     >
-        <v-col
-            cols="auto"
-        >
+        <v-col cols="auto">
             {{formattedDay}}
         </v-col>
         <v-col
